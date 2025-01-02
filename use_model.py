@@ -5,7 +5,7 @@ def usar_modelo():
     url = "http://192.168.0.18:5000/predict"
 
     # Dados que queremos prever (substitua pelos seus valores)
-    dados = {"valores": [1.5, 2.5, 3.5]}
+    dados = {"valores": [0, 2, 3]}
 
     try:
         # Enviando a requisição POST para a API
