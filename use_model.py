@@ -1,24 +1,25 @@
 import requests
 
-def usar_modelo():
-    # URL da API - Atualize conforme o IP da máquina onde a API está rodando
+def use_model():
+    # API URL - Update with the IP of the machine where the API is running
     url = "http://192.168.0.18:5000/predict"
 
-    # Dados que queremos prever (substitua pelos seus valores)
-    dados = {"valores": [0, 2, 3]}
+    # Data to be predicted (replace with your values)
+    data = {"values": [100, 200, 300]}
 
     try:
-        # Enviando a requisição POST para a API
-        response = requests.post(url, json=dados)
+        # Sending the POST request to the API
+        response = requests.post(url, json=data)
 
-        # Verificando se a resposta foi bem-sucedida
+        # Checking if the response was successful
         if response.status_code == 200:
-            previsoes = response.json()["previsoes"]
-            print("Previsões do modelo:", previsoes)
+            predictions = response.json()["predictions"]
+            print("Model predictions:", predictions)
         else:
-            print("Erro na API:", response.status_code, response.json())
+            print("API error:", response.status_code, response.json())
     except Exception as e:
-        print("Erro ao se conectar com a API:", e)
+        print("Error connecting to the API:", e)
 
 if __name__ == "__main__":
-    usar_modelo()
+    use_model()
+

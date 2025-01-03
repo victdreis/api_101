@@ -4,20 +4,20 @@ from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
 import pickle
 
-# Gerando dados fictícios
+# Generating synthetic data
 np.random.seed(42)
-X = np.random.rand(100, 1) * 10  # Valores entre 0 e 10
-y = 2.5 * X + np.random.randn(100, 1) * 2  # Relação linear com ruído
+X = np.random.rand(100, 1) * 10  # Values between 0 and 10
+y = 2.5 * X + np.random.randn(100, 1) * 2  # Linear relationship with noise
 
-# Dividindo os dados em treino e teste
+# Splitting the data into training and testing sets
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-# Treinando o modelo
-modelo = LinearRegression()
-modelo.fit(X_train, y_train)
+# Training the model
+model = LinearRegression()
+model.fit(X_train, y_train)
 
-# Salvando o modelo treinado
-with open("model/modelo.pkl", "wb") as f:
-    pickle.dump(modelo, f)
+# Saving the trained model
+with open("model/model.pkl", "wb") as f:
+    pickle.dump(model, f)
 
-print("Modelo treinado e salvo em 'model/modelo.pkl'")
+print("Model trained and saved in 'model/model.pkl'")

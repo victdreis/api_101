@@ -1,93 +1,106 @@
-# API de Machine Learning com Flask
+# Machine Learning API with Flask
 
-Esta API utiliza Flask para servir um modelo de Machine Learning simples treinado com sklearn. O modelo prevê valores baseados em entradas fornecidas.
+This API uses Flask to serve a simple Machine Learning model trained with sklearn. The model predicts values based on provided inputs.
 
 ---
 
-## **Estrutura do Projeto**
+## **Project Structure**
 
 ```
 api_ml/
-├── app.py               # Código principal da API Flask
-├── train_model.py       # Código para treinar e salvar o modelo
-├── use_model.py         # Script para usar o modelo via API
+├── app.py               # Main Flask API code
+├── train_model.py       # Code to train and save the model
+├── use_model.py         # Script to use the model via the API
 ├── model/
-│   └── modelo.pkl       # Arquivo do modelo treinado
-├── requirements.txt     # Lista de dependências
-└── README.md            # Este arquivo
+│   └── model.pkl        # Trained model file
+├── requirements.txt     # List of dependencies
+└── README.md            # This file
 ```
 
 ---
 
-## **1. Configuração do Ambiente**
+## **1. Environment Setup**
 
-### **1.1 Pré-requisitos**
-- **Git** instalado: [Instruções de instalação](https://git-scm.com/).
-- **Conda** instalado: [Baixar Conda](https://docs.conda.io/en/latest/miniconda.html).
+### **1.1 Prerequisites**
 
-### **1.2 Clonando o Repositório**
-1. Clone o repositório:
+- **Git** installed: [Installation instructions](https://git-scm.com/).
+- **Conda** installed: [Download Conda](https://docs.conda.io/en/latest/miniconda.html).
+
+### **1.2 Cloning the Repository**
+
+1. Clone the repository:
+
    ```bash
    git clone <git@github.com:victdreis/api_101.git>
    cd api_101
    ```
 
-2. Crie o ambiente Conda:
+2. Create the Conda environment:
+
    ```bash
    conda create -n api_101 python=3.9 -y
    conda activate api_101
    ```
 
-3. Instale as dependências:
+3. Install dependencies:
+
    ```bash
    pip install -r requirements.txt
    ```
 
 ---
 
-## **2. Treinando o Modelo**
+## **2. Training the Model**
 
-Se necessário, treine o modelo executando:
+If needed, train the model by running:
+
 ```bash
 python train_model.py
 ```
-Isso gerará o arquivo `modelo.pkl` dentro da pasta `model/`.
+
+This will generate the `model.pkl` file inside the `model/` directory.
 
 ---
 
-## **3. Executando a API**
+## **3. Running the AP\*\*\*\*I**
 
-Inicie o servidor Flask executando:
+Start the Flask server by running:
+
 ```bash
 python app.py
 ```
-A API estará acessível no endereço:
-- Localmente: `http://127.0.0.1:5000`
-- Na rede local: `http://192.168.0.18:5000` .
+
+The API will be accessible at:
+
+- Locally: `http://127.0.0.1:5000`
+- On the local network: `http://192.168.0.18:5000`.
 
 ---
 
-## **4. Usando o Modelo via API**
+## **4. Using the Model via API**
 
-### **4.1 Testando com o Script**
-Use o script `use_model.py` para enviar dados e obter previsões:
+### **4.1 Testing with the Script**
+
+Use the `use_model.py` script to send data and get predictions:
+
 ```bash
 python use_model.py
 ```
-Saída esperada:
+
+Expected output:
+
 ```
-Previsões do modelo: [[valor1], [valor2], [valor3]]
+Model predictions: [[value1], [value2], [value3]]
 ```
 
-### **4.2 Testando com `curl`**
-Envie uma requisição POST diretamente pelo terminal:
+### \*\*4.2 Testing with \*\***`curl`**
+
+Send a POST request directly from the terminal:
+
 ```bash
-curl -X POST http://http://192.168.0.18:5000/predict \
+curl -X POST http://192.168.0.18:5000/predict \
 -H "Content-Type: application/json" \
--d '{"valores": [0, 2, 3]}'
+-d '{"values": [0, 2, 3]}'
 ```
 
 ---
-
-
-

@@ -4,29 +4,42 @@ import numpy as np
 
 app = Flask(__name__)
 
-# Carregar o modelo treinado
-with open("model/modelo.pkl", "rb") as f:
-    modelo = pickle.load(f)
+# Load the trained model
+with open("model/model.pkl", "rb") as f:
+    model = pickle.load(f)
+
+# Example data storage for management
+stored_data = {}
 
 @app.route("/")
 def home():
-    return "API de Machine Learning funcionando!"
+    return "Machine Learning API with multiple functionalities is running!"
 
-# Rota para prever resultados
+# Route for predicting results (POST)
 @app.route("/predict", methods=["POST"])
 def predict():
     try:
-        # Receber dados em formato JSON
-        dados = request.get_json()
-        valores = np.array(dados["valores"]).reshape(-1, 1)
+        # Receive data in JSON format
+        data = request.get_json()
+        values = np.array(data["values"]).reshape(-1, 1)
         
-        # Fazer previsão
-        previsao = modelo.predict(valores).tolist()
+        # Make predictions
+        predictions = model.predict(values).tolist()
         
-        return jsonify({"previsoes": previsao})
+        return jsonify({"predictions": predictions})
     except Exception as e:
-        return jsonify({"erro": str(e)}), 400
+        return jsonify({"error": str(e)}), 400
+
+# Route for listing data (GET)
+@app.route("/data", methods=["GET"])
+def list_data():
+    try:
+        return jsonify({"stored_data": stored_data})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
 
 if __name__ == "__main__":
-    # Torna a API acessível para outros computadores na mesma rede
+    # Make the API accessible to other computers on the same network
     app.run(host="0.0.0.0", port=5000, debug=True)
+
+
