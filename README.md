@@ -62,7 +62,7 @@ This will generate the `model.pkl` file inside the `model/` directory.
 
 ---
 
-## **3. Running the AP\*\*\*\*I**
+## **3. Running the API**
 
 Start the Flask server by running:
 
@@ -93,7 +93,7 @@ Expected output:
 Model predictions: [[value1], [value2], [value3]]
 ```
 
-### \*\*4.2 Testing with \*\***`curl`**
+### **4.2 Testing with `curl`**
 
 Send a POST request directly from the terminal:
 
@@ -102,5 +102,40 @@ curl -X POST http://192.168.0.18:5000/predict \
 -H "Content-Type: application/json" \
 -d '{"values": [0, 2, 3]}'
 ```
+
+---
+
+## **5. Running with Docker**
+
+### **5.1 Prerequisites**
+- Docker installed: [Installation instructions](https://docs.docker.com/get-docker/).
+
+### **5.2 Building the Docker Image**
+
+1. Make sure Docker is running.
+2. Build the Docker image:
+
+   ```bash
+   docker build -t api_ml .
+   ```
+
+### **5.3 Running the Docker Container**
+
+Run the container with the following command:
+
+```bash
+docker run -p 5000:5000 api_ml
+```
+
+The API will be accessible at:
+
+- Locally: `http://127.0.0.1:5000`
+- On the local network: `http://<your_local_ip>:5000`
+
+---
+
+### **5.4 Testing the API via Docker**
+
+After the container is running, you can test the API using the `use_model.py` script or by sending requests with `curl`, as described above.
 
 ---
