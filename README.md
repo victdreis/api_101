@@ -32,21 +32,21 @@ api_ml/
 
 1. Clone the repository:
 
-   ```bash
+   ```sh
    git clone <git@github.com:victdreis/api_101.git>
    cd api_101
    ```
 
 2. Create the Conda environment:
 
-   ```bash
+   ```sh
    conda create -n api_101 python=3.9 -y
    conda activate api_101
    ```
 
 3. Install dependencies with Poetry:
 
-   ```bash
+   ```sh
    poetry install
    ```
 
@@ -56,7 +56,7 @@ api_ml/
 
 If needed, train the model by running:
 
-```bash
+```sh
 python train_model.py
 ```
 
@@ -68,7 +68,7 @@ This will generate the `model.pkl` file inside the `model/` directory.
 
 Start the FastAPI server using Uvicorn:
 
-```bash
+```sh
 uvicorn app:app --host 0.0.0.0 --port 5000 --reload
 ```
 
@@ -85,7 +85,7 @@ The API will be accessible at:
 
 Use the `use_model.py` script to send data and get predictions:
 
-```bash
+```sh
 python use_model.py
 ```
 
@@ -99,7 +99,7 @@ Model predictions: [[value1], [value2], [value3]]
 
 Send a POST request directly from the terminal:
 
-```bash
+```sh
 curl -X POST http://127.0.0.1:5000/predict \
 -H "Content-Type: application/json" \
 -d '{"values": [0, 2, 3]}'
