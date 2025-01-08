@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException
+from fastapi.responses import RedirectResponse
 from pydantic import BaseModel
 import pickle
 import numpy as np
@@ -20,7 +21,7 @@ class PredictRequest(BaseModel):
 
 @app.get("/")
 def home():
-    return {"message": "Machine Learning API with multiple functionalities is running!"}
+    return RedirectResponse(url="/docs")
 
 # Route for predicting results (POST)
 @app.post("/predict")
@@ -43,5 +44,3 @@ def list_data():
         return {"stored_data": stored_data}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
-
-

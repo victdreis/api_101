@@ -28,6 +28,7 @@ zipp = "3.21.0"
 fastapi = "^0.115.6"
 uvicorn = "^0.34.0"
 requests = "^2.32.3"
+kaggle = "^1.6.17"
 
 [tool.poetry.dev-dependencies]
 
