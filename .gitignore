@@ -1,0 +1,4 @@
+data/*.csv
+
+model/horse_racing_model.pkl
+
