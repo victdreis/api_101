@@ -105,5 +105,29 @@ curl -X POST http://127.0.0.1:5000/predict \
 -d '{"values": [0, 2, 3]}'
 ```
 
+### **4.3 Testing with Python**
+
+You can also test the API using Python's `requests` library:
+
+```python
+import requests
+
+url = "http://127.0.0.1:5000/predict"
+data = {"values": [0, 2, 3]}
+
+response = requests.post(url, json=data)
+
+if response.status_code == 200:
+    print("Predictions:", response.json()["predictions"])
+else:
+    print("Error:", response.json())
+```
+
+Expected output:
+
+```
+Predictions: [[value1], [value2], [value3]]
+```
+
 ---
 

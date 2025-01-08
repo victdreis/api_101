@@ -44,6 +44,4 @@ def list_data():
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-# Run the app with uvicorn
-# Use the following command to run this script:
-# uvicorn filename:app --host 0.0.0.0 --port 5000 --reload
+
