@@ -1,8 +1,12 @@
-from flask import Flask, request, jsonify
+from fastapi import FastAPI, HTTPException
+from fastapi.responses import RedirectResponse
+from pydantic import BaseModel
 import pickle
 import numpy as np
+from typing import List
 
-app = Flask(__name__)
+# Define the FastAPI app
+app = FastAPI()
 
 # Load the trained model
 with open("model/model.pkl", "rb") as f:
@@ -11,35 +15,32 @@ with open("model/model.pkl", "rb") as f:
 # Example data storage for management
 stored_data = {}
 
-@app.route("/")
+# Define a Pydantic model for input validation
+class PredictRequest(BaseModel):
+    values: List[float]
+
+@app.get("/")
 def home():
-    return "Machine Learning API with multiple functionalities is running!"
+    return RedirectResponse(url="/docs")
 
 # Route for predicting results (POST)
-@app.route("/predict", methods=["POST"])
-def predict():
+@app.post("/predict")
+def predict(request: PredictRequest):
     try:
-        # Receive data in JSON format
-        data = request.get_json()
-        values = np.array(data["values"]).reshape(-1, 1)
+        # Convert input data to numpy array and reshape
+        values = np.array(request.values).reshape(-1, 1)
         
         # Make predictions
         predictions = model.predict(values).tolist()
         
-        return jsonify({"predictions": predictions})
+        return {"predictions": predictions}
     except Exception as e:
-        return jsonify({"error": str(e)}), 400
+        raise HTTPException(status_code=400, detail=str(e))
 
 # Route for listing data (GET)
-@app.route("/data", methods=["GET"])
+@app.get("/data")
 def list_data():
     try:
-        return jsonify({"stored_data": stored_data})
+        return {"stored_data": stored_data}
     except Exception as e:
-        return jsonify({"error": str(e)}), 400
-
-if __name__ == "__main__":
-    # Make the API accessible to other computers on the same network
-    app.run(host="0.0.0.0", port=5000, debug=True)
-
-
+        raise HTTPException(status_code=400, detail=str(e))

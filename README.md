@@ -1,6 +1,6 @@
-# Machine Learning API with Flask
+# Machine Learning API with FastAPI
 
-This API uses Flask to serve a simple Machine Learning model trained with sklearn. The model predicts values based on provided inputs.
+This API uses **FastAPI** to serve a simple Machine Learning model trained with sklearn. The model predicts values based on provided inputs.
 
 ---
 
@@ -8,12 +8,13 @@ This API uses Flask to serve a simple Machine Learning model trained with sklear
 
 ```
 api_ml/
-├── app.py               # Main Flask API code
+├── app.py               # Main FastAPI code
 ├── train_model.py       # Code to train and save the model
 ├── use_model.py         # Script to use the model via the API
 ├── model/
 │   └── model.pkl        # Trained model file
-├── requirements.txt     # List of dependencies
+├── pyproject.toml       # Poetry configuration file
+├── poetry.lock          # Poetry lock file
 └── README.md            # This file
 ```
 
@@ -25,27 +26,28 @@ api_ml/
 
 - **Git** installed: [Installation instructions](https://git-scm.com/).
 - **Conda** installed: [Download Conda](https://docs.conda.io/en/latest/miniconda.html).
+- **Poetry** installed: [Poetry installation](https://python-poetry.org/docs/#installation).
 
 ### **1.2 Cloning the Repository**
 
 1. Clone the repository:
 
-   ```bash
+   ```sh
    git clone <git@github.com:victdreis/api_101.git>
    cd api_101
    ```
 
 2. Create the Conda environment:
 
-   ```bash
+   ```sh
    conda create -n api_101 python=3.9 -y
    conda activate api_101
    ```
 
-3. Install dependencies:
+3. Install dependencies with Poetry:
 
-   ```bash
-   pip install -r requirements.txt
+   ```sh
+   poetry install
    ```
 
 ---
@@ -54,7 +56,7 @@ api_ml/
 
 If needed, train the model by running:
 
-```bash
+```sh
 python train_model.py
 ```
 
@@ -64,10 +66,10 @@ This will generate the `model.pkl` file inside the `model/` directory.
 
 ## **3. Running the API**
 
-Start the Flask server by running:
+Start the FastAPI server using Uvicorn:
 
-```bash
-python app.py
+```sh
+uvicorn app:app --host 0.0.0.0 --port 5000 --reload
 ```
 
 The API will be accessible at:
@@ -83,7 +85,7 @@ The API will be accessible at:
 
 Use the `use_model.py` script to send data and get predictions:
 
-```bash
+```sh
 python use_model.py
 ```
 
@@ -97,45 +99,35 @@ Model predictions: [[value1], [value2], [value3]]
 
 Send a POST request directly from the terminal:
 
-```bash
-curl -X POST http://192.168.0.18:5000/predict \
+```sh
+curl -X POST http://127.0.0.1:5000/predict \
 -H "Content-Type: application/json" \
 -d '{"values": [0, 2, 3]}'
 ```
 
----
+### **4.3 Testing with Python**
 
-## **5. Running with Docker**
+You can also test the API using Python's `requests` library:
 
-### **5.1 Prerequisites**
-- Docker installed: [Installation instructions](https://docs.docker.com/get-docker/).
+```python
+import requests
 
-### **5.2 Building the Docker Image**
+url = "http://127.0.0.1:5000/predict"
+data = {"values": [0, 2, 3]}
 
-1. Make sure Docker is running.
-2. Build the Docker image:
+response = requests.post(url, json=data)
 
-   ```bash
-   docker build -t api_ml .
-   ```
-
-### **5.3 Running the Docker Container**
-
-Run the container with the following command:
-
-```bash
-docker run -p 5000:5000 api_ml
+if response.status_code == 200:
+    print("Predictions:", response.json()["predictions"])
+else:
+    print("Error:", response.json())
 ```
 
-The API will be accessible at:
+Expected output:
 
-- Locally: `http://127.0.0.1:5000`
-- On the local network: `http://<your_local_ip>:5000`
-
----
-
-### **5.4 Testing the API via Docker**
-
-After the container is running, you can test the API using the `use_model.py` script or by sending requests with `curl`, as described above.
+```
+Predictions: [[value1], [value2], [value3]]
+```
 
 ---
+
