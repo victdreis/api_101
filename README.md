@@ -1,133 +1,47 @@
-# Machine Learning API with FastAPI
+from fastapi import FastAPI
+from pydantic import BaseModel
+import joblib
+import pandas as pd
 
-This API uses **FastAPI** to serve a simple Machine Learning model trained with sklearn. The model predicts values based on provided inputs.
+# Carregar modelos treinados
+rank_model = joblib.load('rank_model.pkl')
+win_model = joblib.load('win_model.pkl')
 
----
+# Criar aplicação FastAPI
+app = FastAPI(title="Horse Racing Prediction API", description="Predição de ranking e probabilidade de vitória.", version="1.0")
 
-## **Project Structure**
+# Definir esquema de entrada para validação
+class PredictionInput(BaseModel):
+    Country: str
+    Jockey: str
+    Track: str
+    Surface: str
 
-```
-api_ml/
-├── app.py               # Main FastAPI code
-├── train_model.py       # Code to train and save the model
-├── use_model.py         # Script to use the model via the API
-├── model/
-│   └── model.pkl        # Trained model file
-├── pyproject.toml       # Poetry configuration file
-├── poetry.lock          # Poetry lock file
-└── README.md            # This file
-```
+# Rota para predizer ranking e probabilidade de vitória
+@app.post("/predict", summary="Faz predição de ranking e probabilidade de vitória")
+def predict(input_data: PredictionInput):
+    # Converter input para DataFrame
+    input_df = pd.DataFrame([input_data.dict()])
 
----
+    # Transformar dados para os modelos
+    input_df = pd.get_dummies(input_df, drop_first=True)
 
-## **1. Environment Setup**
+    # Garantir que colunas ausentes sejam preenchidas (durante o uso de novos dados)
+    for col in rank_model.feature_names_in_:
+        if col not in input_df:
+            input_df[col] = 0
 
-### **1.1 Prerequisites**
+    # Predições
+    rank_pred = rank_model.predict(input_df)
+    win_prob = win_model.predict_proba(input_df)[:, 1]
 
-- **Git** installed: [Installation instructions](https://git-scm.com/).
-- **Conda** installed: [Download Conda](https://docs.conda.io/en/latest/miniconda.html).
-- **Poetry** installed: [Poetry installation](https://python-poetry.org/docs/#installation).
+    # Resposta JSON
+    return {
+        "ranking_prediction": float(rank_pred[0]),
+        "win_probability": float(win_prob[0])
+    }
 
-### **1.2 Cloning the Repository**
-
-1. Clone the repository:
-
-   ```sh
-   git clone <git@github.com:victdreis/api_101.git>
-   cd api_101
-   ```
-
-2. Create the Conda environment:
-
-   ```sh
-   conda create -n api_101 python=3.9 -y
-   conda activate api_101
-   ```
-
-3. Install dependencies with Poetry:
-
-   ```sh
-   poetry install
-   ```
-
----
-
-## **2. Training the Model**
-
-If needed, train the model by running:
-
-```sh
-python train_model.py
-```
-
-This will generate the `model.pkl` file inside the `model/` directory.
-
----
-
-## **3. Running the API**
-
-Start the FastAPI server using Uvicorn:
-
-```sh
-uvicorn app:app --host 0.0.0.0 --port 5000 --reload
-```
-
-The API will be accessible at:
-
-- Locally: `http://127.0.0.1:5000`
-- On the local network: `http://192.168.0.18:5000`.
-
----
-
-## **4. Using the Model via API**
-
-### **4.1 Testing with the Script**
-
-Use the `use_model.py` script to send data and get predictions:
-
-```sh
-python use_model.py
-```
-
-Expected output:
-
-```
-Model predictions: [[value1], [value2], [value3]]
-```
-
-### **4.2 Testing with `curl`**
-
-Send a POST request directly from the terminal:
-
-```sh
-curl -X POST http://127.0.0.1:5000/predict \
--H "Content-Type: application/json" \
--d '{"values": [0, 2, 3]}'
-```
-
-### **4.3 Testing with Python**
-
-You can also test the API using Python's `requests` library:
-
-```python
-import requests
-
-url = "http://127.0.0.1:5000/predict"
-data = {"values": [0, 2, 3]}
-
-response = requests.post(url, json=data)
-
-if response.status_code == 200:
-    print("Predictions:", response.json()["predictions"])
-else:
-    print("Error:", response.json())
-```
-
-Expected output:
-
-```
-Predictions: [[value1], [value2], [value3]]
-```
-
----
-
+# Rota inicial (saudação)
+@app.get("/", summary="Endpoint inicial")
+def home():
+    return {"message": "Bem-vindo à API de predição de corridas de cavalos!"}

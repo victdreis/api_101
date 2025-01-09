@@ -1,46 +1,47 @@
-from fastapi import FastAPI, HTTPException
-from fastapi.responses import RedirectResponse
+from fastapi import FastAPI
 from pydantic import BaseModel
-import pickle
-import numpy as np
-from typing import List
+import joblib
+import pandas as pd
 
-# Define the FastAPI app
-app = FastAPI()
+# Carregar modelos treinados
+rank_model = joblib.load('model/rank_model.pkl')
+win_model = joblib.load('model/win_model.pkl')
 
-# Load the trained model
-with open("model/model.pkl", "rb") as f:
-    model = pickle.load(f)
+# Criar aplicação FastAPI
+app = FastAPI(title="Horse Racing Prediction API", description="Predição de ranking e probabilidade de vitória.", version="1.0")
 
-# Example data storage for management
-stored_data = {}
+# Definir esquema de entrada para validação
+class PredictionInput(BaseModel):
+    Country: str
+    Jockey: str
+    Track: str
+    Surface: str
 
-# Define a Pydantic model for input validation
-class PredictRequest(BaseModel):
-    values: List[float]
+# Rota para predizer ranking e probabilidade de vitória
+@app.post("/predict", summary="Faz predição de ranking e probabilidade de vitória")
+def predict(input_data: PredictionInput):
+    # Converter input para DataFrame
+    input_df = pd.DataFrame([input_data.dict()])
 
-@app.get("/")
+    # Transformar dados para os modelos
+    input_df = pd.get_dummies(input_df, drop_first=True)
+
+    # Garantir que colunas ausentes sejam preenchidas (durante o uso de novos dados)
+    for col in rank_model.feature_names_in_:
+        if col not in input_df:
+            input_df[col] = 0
+
+    # Predições
+    rank_pred = rank_model.predict(input_df)
+    win_prob = win_model.predict_proba(input_df)[:, 1]
+
+    # Resposta JSON
+    return {
+        "ranking_prediction": float(rank_pred[0]),
+        "win_probability": float(win_prob[0])
+    }
+
+# Rota inicial (saudação)
+@app.get("/", summary="Endpoint inicial")
 def home():
-    return RedirectResponse(url="/docs")
-
-# Route for predicting results (POST)
-@app.post("/predict")
-def predict(request: PredictRequest):
-    try:
-        # Convert input data to numpy array and reshape
-        values = np.array(request.values).reshape(-1, 1)
-        
-        # Make predictions
-        predictions = model.predict(values).tolist()
-        
-        return {"predictions": predictions}
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
-
-# Route for listing data (GET)
-@app.get("/data")
-def list_data():
-    try:
-        return {"stored_data": stored_data}
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+    return {"message": "Bem-vindo à API de predição de corridas de cavalos!"}
